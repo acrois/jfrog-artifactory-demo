@@ -8,11 +8,11 @@ If you don't need to build and just want to run the `spring-petclininc` applicat
 docker run --rm -p 8083:8080 -d ghcr.io/acrois/jfrog-artifactory-demo
 ```
 
-Visit the application at http://localhost:8083
+Give the application a few moments to initialize and then visit the application at http://localhost:8083
 
 ## Build
 
-The build uses Jenkins to build the `spring-petclinic` application incorporating JFrog's Artifactory to store the Java Archive (JAR) and publish the image to GitHub (ghcr.io).
+The build uses [Jenkins](https://www.jenkins.io/) to build the [spring-petclinic](https://github.com/spring-projects/spring-petclinic/) application, incorporating [JFrog Artifactory](https://jfrog.com/artifactory/) to store the Java Archive (JAR), and finally publishes the image to GitHub (ghcr.io).
 
 ### Requirements
 
@@ -25,6 +25,28 @@ The build uses Jenkins to build the `spring-petclinic` application incorporating
 ```bash
 ./setup.sh
 ```
+
+### High-level Overview
+
+1. Configure Artifactory
+   - Create Repository
+   - Create Project
+   - Create User
+2. Configure Jenkins
+   - Artifactory Credentials
+   - GitHub Credentials
+   - Create Pipeline
+3. Run Jenkins Pipeline (using [Jenkinsfile](./Jenkinsfile))
+   - Checkout repository (local or remote Git repo)
+   - Compile
+   - Test
+   - Package
+   - Upload to Artifactory
+   - Download from Artifactory
+   - Package into Docker image (using [Dockerfile](./Dockerfile))
+   - Upload to ghcr.io
+
+Note: this repository is configured to source dependencies from JCenter (using [settings.xml](./settings.xml)) although it has [been sunsetted](https://jfrog.com/blog/into-the-sunset-bintray-jcenter-gocenter-and-chartcenter/) is read-only. This simulates a legacy application configuration.
 
 ### Local Development Configuration
 
