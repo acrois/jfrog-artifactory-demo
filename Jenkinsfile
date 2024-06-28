@@ -7,7 +7,7 @@ pipeline {
         ARTIFACTORY_REPO_MAVEN = 'petclinic-mvn'
         ARTIFACTORY_CRED_ID = 'artifactory-credentials'
         SPRING_PETCLINIC_DIR = '/var/jenkins_home/petclinic-demo'
-        PUSH_TO_GHCR = 'true'
+        PUSH_TO_GHCR = 'false'
         GHCR_USERNAME = 'acrois'
     }
 
