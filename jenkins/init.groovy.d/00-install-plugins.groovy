@@ -8,19 +8,23 @@ import java.util.logging.Level
 import java.util.logging.Logger
 
 def logger = Logger.getLogger("Plugins")
-def instance = Jenkins.getInstance()
-def pluginManager = instance.getPluginManager()
-def updateCenter = instance.getUpdateCenter()
 
 def installPlugin(pluginId, version = null) {
+    def pluginManager = Jenkins.instance.pluginManager
+    def updateCenter = Jenkins.instance.updateCenter
+
+    def installed = pluginManager.getPlugin(pluginId)
+    if (installed != null) {
+        logger.log(Level.INFO, "Plugin already installed: " + pluginId)
+        return
+    }
+
+    def pluginWithVersion = version ? "${pluginId}:${version}" : pluginId
     def plugin = updateCenter.getPlugin(pluginId)
 
     if (plugin) {
-        if (version) {
-            plugin.deploy(version)
-        } else {
-            plugin.deploy()
-        }
+        plugin.deploy(true)
+        logger.log(Level.INFO, "Installing plugin: " + pluginWithVersion)
     } else {
         logger.log(Level.SEVERE, "Plugin not found: " + pluginId)
     }
