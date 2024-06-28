@@ -1,0 +1,34 @@
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - ./jenkins/init.groovy.d:/var/jenkins_home/init.groovy.d
+      - ./jenkins/plugins.txt:/usr/share/jenkins/ref/plugins.txt
+      - ./:/var/jenkins_home/petclinic-demo
+      - /var/run/docker.sock:/var/run/docker.sock
+    user: root
+    environment:
+      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
+      
+  artifactory:
+    image: releases-docker.jfrog.io/jfrog/artifactory-oss:latest
+    container_name: artifactory
+    ports:
+      - "8081:8081"
+      - "8082:8082"
+    entrypoint: ["/bin/bash", "/entrypoint.sh"]
+    user: "1030:1030"
+    volumes:
+      - artifactory_data:/var/opt/jfrog/artifactory
+      - ./artifactory/entrypoint.sh:/entrypoint.sh
+      # - ./artifactory/system.yaml:/var/opt/jfrog/artifactory/etc/system.yaml
+      - ./artifactory/master.key:/var/opt/jfrog/artifactory/etc/security/master.key
+
+volumes:
+  jenkins_home:
+  artifactory_data:
