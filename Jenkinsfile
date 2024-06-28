@@ -111,7 +111,7 @@ pipeline {
                             "files": [
                                 {
                                     "pattern": "${env.ARTIFACTORY_REPO_MAVEN}/*.jar",
-                                    "target": "../app.jar",
+                                    "target": "app.jar",
                                     "flat": "true"
                                 }
                             ]
