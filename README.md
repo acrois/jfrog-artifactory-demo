@@ -2,7 +2,7 @@
 
 ## Usage
 
-If you don't need to build and just want to run the `spring-petclininc` application locally:
+If you don't need to build and just want to run the `spring-petclinic` application locally:
 
 ```sh
 docker run --rm -p 8083:8080 -d ghcr.io/acrois/jfrog-artifactory-demo
