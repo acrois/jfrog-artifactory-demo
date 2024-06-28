@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'spring-petclinic'
-        ARTIFACTORY_URL = 'http://artifactory:8081/artifactory'
+        ARTIFACTORY_INSTANCE_ID = 'artifactory'
         ARTIFACTORY_REPO_MAVEN = 'petclinic-mvn'
         ARTIFACTORY_CRED_ID = 'artifactory-credentials'
         SPRING_PETCLINIC_DIR = '/var/jenkins_home/petclinic-demo/spring-petclinic'
@@ -70,7 +70,7 @@ pipeline {
             steps {
                 script {
                     dir(env.LOCAL_DIR) {
-                        def server = Artifactory.server("${ARTIFACTORY_URL}")
+                    def server = Artifactory.server(env.ARTIFACTORY_INSTANCE_ID)
                         def uploadSpec = """{
                             "files": [
                                 {
@@ -79,23 +79,43 @@ pipeline {
                                 }
                             ]
                         }"""
-                        server.upload spec: uploadSpec, credentialsId: "${ARTIFACTORY_CRED_ID}"
+                        server.upload spec: uploadSpec, credentialsId: env.ARTIFACTORY_CRED_ID
                     }
                 }
             }
         }
 
+        // stage('Download Artifact from Artifactory') {
+        //     steps {
+        //         script {
+        //             dir(env.LOCAL_DIR) {
+        //                 withCredentials([usernamePassword(credentialsId: env.ARTIFACTORY_CRED_ID, usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+        //                     sh """
+        //                     curl -u ${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD} \
+        //                     -O ${ARTIFACTORY_URL}/${ARTIFACTORY_REPO_MAVEN}/app.jar
+        //                     """
+        //                     sh 'mv app.jar ../'
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+
         stage('Download Artifact from Artifactory') {
             steps {
                 script {
                     dir(env.LOCAL_DIR) {
-                        withCredentials([usernamePassword(credentialsId: env.ARTIFACTORY_CRED_ID, usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
-                            sh """
-                            curl -u ${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD} \
-                            -O ${ARTIFACTORY_URL}/${ARTIFACTORY_REPO_MAVEN}/app.jar
-                            """
-                            sh 'mv app.jar ../'
-                        }
+                        def server = Artifactory.server(env.ARTIFACTORY_INSTANCE_ID)
+                        def downloadSpec = """{
+                            "files": [
+                                {
+                                    "pattern": "${env.ARTIFACTORY_REPO_MAVEN}/app.jar",
+                                    "target": "../app.jar",
+                                    "flat": "true"
+                                }
+                            ]
+                        }"""
+                        server.download spec: downloadSpec, credentialsId: env.ARTIFACTORY_CRED_ID
                     }
                 }
             }
