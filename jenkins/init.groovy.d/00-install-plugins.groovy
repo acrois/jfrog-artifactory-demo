@@ -31,7 +31,8 @@ def pluginList = [
     [id: 'workflow-aggregator', version: '596.v8c21c963d92d'],
     [id: 'docker-workflow', version: '580.vc0c340686b_54'],
     [id: 'credentials-binding', version: '677.vdc9d38cb_254d'],
-    [id: 'artifactory', version: '4.0.6']
+    [id: 'artifactory', version: '4.0.6'],
+    [id: 'ws-cleanup', version: '0.46']
 ]
 
 pluginList.each { plugin ->

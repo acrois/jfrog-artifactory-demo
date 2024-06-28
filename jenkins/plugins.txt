@@ -3,3 +3,4 @@ workflow-aggregator:596.v8c21c963d92d
 docker-workflow:580.vc0c340686b_54
 credentials-binding:677.vdc9d38cb_254d
 artifactory:4.0.6
+ws-cleanup:0.46
