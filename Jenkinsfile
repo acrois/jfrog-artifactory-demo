@@ -70,7 +70,7 @@ pipeline {
             steps {
                 script {
                     dir(env.LOCAL_DIR) {
-                    def server = Artifactory.server(env.ARTIFACTORY_INSTANCE_ID)
+                        def server = Artifactory.server(env.ARTIFACTORY_INSTANCE_ID)
                         def uploadSpec = """{
                             "files": [
                                 {
@@ -79,7 +79,7 @@ pipeline {
                                 }
                             ]
                         }"""
-                        server.upload spec: uploadSpec, credentialsId: env.ARTIFACTORY_CRED_ID
+                        server.upload spec: uploadSpec, buildInfo: Artifactory.newBuildInfo()
                     }
                 }
             }
