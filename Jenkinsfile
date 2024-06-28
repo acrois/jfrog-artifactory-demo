@@ -2,11 +2,12 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'spring-petclinic'
+        DOCKER_IMAGE = 'ghcr.io/acrois/jfrog-artifactory-demo'
         ARTIFACTORY_INSTANCE_ID = 'artifactory'
         ARTIFACTORY_REPO_MAVEN = 'petclinic-mvn'
         ARTIFACTORY_CRED_ID = 'artifactory-credentials'
         SPRING_PETCLINIC_DIR = '/var/jenkins_home/petclinic-demo'
+        PUSH_TO_GHCR = 'true'
     }
 
     stages {
@@ -86,22 +87,6 @@ pipeline {
             }
         }
 
-        // stage('Download Artifact from Artifactory') {
-        //     steps {
-        //         script {
-        //             dir(env.LOCAL_DIR) {
-        //                 withCredentials([usernamePassword(credentialsId: env.ARTIFACTORY_CRED_ID, usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
-        //                     sh """
-        //                     curl -u ${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD} \
-        //                     -O ${ARTIFACTORY_URL}/${ARTIFACTORY_REPO_MAVEN}/app.jar
-        //                     """
-        //                     sh 'mv app.jar ../'
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-
         stage('Download Artifact from Artifactory') {
             steps {
                 script {
@@ -149,6 +134,20 @@ pipeline {
         //         }
         //     }
         // }
+
+        stage('Push Docker Image to GHCR') {
+            when {
+                expression { return env.PUSH_TO_GHCR == 'true' }
+            }
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'github-token', variable: 'GHCR_TOKEN')]) {
+                        sh "echo ${GHCR_TOKEN} | docker login ghcr.io -u ${env.GHCR_USERNAME} --password-stdin"
+                        sh "docker push ${DOCKER_IMAGE}"
+                    }
+                }
+            }
+        }
     }
     
     post {
