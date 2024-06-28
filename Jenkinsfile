@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'spring-petclinic'
-        ARTIFACTORY_URL = 'http://localhost:8081/artifactory'
+        ARTIFACTORY_URL = 'http://artifactory:8081/artifactory'
         ARTIFACTORY_REPO_MAVEN = 'petclinic-mvn'
         ARTIFACTORY_CRED_ID = 'artifactory-credentials'
         SPRING_PETCLINIC_DIR = '/var/jenkins_home/petclinic-demo/spring-petclinic'
