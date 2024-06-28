@@ -6,7 +6,7 @@ pipeline {
         ARTIFACTORY_INSTANCE_ID = 'artifactory'
         ARTIFACTORY_REPO_MAVEN = 'petclinic-mvn'
         ARTIFACTORY_CRED_ID = 'artifactory-credentials'
-        SPRING_PETCLINIC_DIR = '/var/jenkins_home/petclinic-demo/spring-petclinic'
+        SPRING_PETCLINIC_DIR = '/var/jenkins_home/petclinic-demo'
     }
 
     stages {
@@ -16,8 +16,9 @@ pipeline {
                     // Check if the local directory exists
                     if (fileExists(env.SPRING_PETCLINIC_DIR)) {
                         echo 'Local spring-petclinic directory exists, using local directory.'
-                        env.LOCAL_DIR = env.SPRING_PETCLINIC_DIR
+                        env.LOCAL_DIR = "${env.SPRING_PETCLINIC_DIR}/spring-petclinic"
                         env.SKIP_CHECKOUT = 'true'
+                        sh "git config --global --add safe.directory ${env.SPRING_PETCLINIC_DIR}/.git/modules/spring-petclinic"
                     } else {
                         echo 'Local spring-petclinic directory does not exist, performing checkout.'
                         env.LOCAL_DIR = 'spring-petclinic'
@@ -109,13 +110,13 @@ pipeline {
                         def downloadSpec = """{
                             "files": [
                                 {
-                                    "pattern": "${env.ARTIFACTORY_REPO_MAVEN}/app.jar",
+                                    "pattern": "${env.ARTIFACTORY_REPO_MAVEN}/*.jar",
                                     "target": "../app.jar",
                                     "flat": "true"
                                 }
                             ]
                         }"""
-                        server.download spec: downloadSpec, credentialsId: env.ARTIFACTORY_CRED_ID
+                        server.download spec: downloadSpec, buildInfo: Artifactory.newBuildInfo()
                     }
                 }
             }
