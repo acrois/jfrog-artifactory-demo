@@ -8,6 +8,7 @@ pipeline {
         ARTIFACTORY_CRED_ID = 'artifactory-credentials'
         SPRING_PETCLINIC_DIR = '/var/jenkins_home/petclinic-demo'
         PUSH_TO_GHCR = 'true'
+        GHCR_USERNAME = 'acrois'
     }
 
     stages {
